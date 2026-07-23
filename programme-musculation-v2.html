@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carnet d'entraînement — Rotation A / B / C</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  :root{
+    --bone: #E9E4D6;
+    --bone-2: #ddd6c2;
+    --ink: #232620;
+    --ink-soft: #4a4d43;
+    --forest: #35422f;
+    --copper: #a8582f;
+    --line: rgba(35,38,32,0.16);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 90% -10%, rgba(168,88,47,0.08), transparent 60%),
+      var(--bone);
+    color:var(--ink);
+    font-family:'Bitter', Georgia, serif;
+    padding:32px 16px 60px;
+  }
+  .wrap{max-width:960px;margin:0 auto;}
+
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:3px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  header h1{
+    font-size:clamp(26px,4vw,38px);
+    margin:0;
+    font-weight:800;
+    letter-spacing:-0.5px;
+    line-height:1.05;
+  }
+  header h1 span{color:var(--copper);}
+  .meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-align:right;
+    line-height:1.5;
+  }
+  .meta b{color:var(--ink);}
+
+  .rotation-bar{
+    display:flex;
+    gap:8px;
+    margin:18px 0 30px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.5px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .rotation-bar b{color:var(--ink-soft); font-weight:600; margin-right:4px;}
+  .rot-chip{
+    background:var(--ink);
+    color:var(--bone);
+    padding:5px 11px;
+    border-radius:6px;
+    font-weight:700;
+  }
+  .rot-arrow{color:var(--ink-soft);}
+
+  .group{margin-bottom:36px;}
+  .group-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:6px;
+  }
+  .group-num{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:13px;
+    color:var(--bone);
+    background:var(--forest);
+    padding:5px 10px;
+    border-radius:4px;
+    letter-spacing:1px;
+  }
+  .group-head h2{font-size:19px; margin:0; font-weight:800;}
+  .group-sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin:0 0 14px 46px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:rgba(255,255,255,0.35);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  thead th{
+    text-align:left;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    font-weight:600;
+    padding:10px 14px;
+    border-bottom:1.5px solid var(--ink);
+  }
+  tbody tr{border-bottom:1px solid var(--line);}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:rgba(168,88,47,0.06);}
+  td{padding:12px 14px; vertical-align:middle;}
+  .icon-cell{width:64px;}
+  .icon-badge{
+    width:52px;height:52px;
+    border-radius:10px;
+    background:var(--bone-2);
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-badge svg{width:32px;height:32px;stroke:var(--forest);}
+  .ex-name{font-weight:700; font-size:15px;}
+  .ex-target{font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--ink-soft); margin-top:2px;}
+  .reps{font-family:'JetBrains Mono', monospace; font-weight:700; font-size:14.5px; color:var(--copper); white-space:nowrap;}
+  .rest{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--ink-soft); white-space:nowrap;}
+
+  .new-tag{
+    display:inline-block;
+    background:var(--copper);
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    padding:2px 6px;
+    border-radius:4px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+
+  footer{
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1.5px dashed var(--line);
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+  footer b{color:var(--ink);}
+
+  @media (max-width:600px){
+    .ex-target{display:none;}
+    thead th:nth-child(2){display:none;}
+    header{flex-direction:column; align-items:flex-start;}
+    .meta{text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Carnet d'entraînement<br><span>Rotation Séance A · B · C</span></h1>
+    <div class="meta">
+      <b>À domicile</b><br>
+      Tapis + haltères 2–10 kg<br>
+      30–40 min / séance
+    </div>
+  </header>
+
+  <div class="rotation-bar">
+    <b>Enchaînement conseillé :</b>
+    <span class="rot-chip">A</span><span class="rot-arrow">→</span>
+    <span class="rot-chip">B</span><span class="rot-arrow">→</span>
+    <span class="rot-chip">C</span><span class="rot-arrow">→</span>
+    <span class="rot-chip">A</span><span class="rot-arrow">→</span>
+    <span class="rot-chip">B</span><span class="rot-arrow">→</span>
+    <span class="rot-chip">C</span><span class="rot-arrow">…</span>
+  </div>
+
+  <!-- SEANCE A -->
+  <div class="group">
+    <div class="group-head">
+      <div class="group-num">A</div>
+      <h2>Pectoraux & Triceps</h2>
+    </div>
+    <p class="group-sub">poussée · 4 exercices</p>
+    <table>
+      <thead><tr><th style="width:64px"></th><th>Exercice</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="10" cy="14" r="4"/><path d="M10 18 L10 26 L6 34"/><path d="M10 26 L18 26"/>
+              <path d="M18 26 L40 26 L40 20 M40 26 L44 32"/><path d="M10 34 L18 30 L26 34"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Pompes sur genoux</div><div class="ex-target">grand pectoral</div></td>
+          <td class="reps">3 × 8–12</td><td class="rest">60 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <path d="M6 30 L42 30"/><circle cx="10" cy="30" r="3"/><circle cx="38" cy="30" r="3"/>
+              <path d="M10 30 L10 16 M38 30 L38 16"/><path d="M6 16 L14 16 M34 16 L42 16"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Développé couché haltères</div><div class="ex-target">pectoraux / triceps</div></td>
+          <td class="reps">3 × 10–12</td><td class="rest">60 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <path d="M8 30 L24 30 L40 30"/><circle cx="8" cy="18" r="3"/><circle cx="40" cy="18" r="3"/>
+              <path d="M24 30 L8 20 M24 30 L40 20"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Écarté couché haltères</div><div class="ex-target">pectoraux (étirement)</div></td>
+          <td class="reps">2–3 × 12</td><td class="rest">45 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="24" cy="8" r="4"/><path d="M24 12 L24 24"/><path d="M24 24 L16 28 M16 28 L16 12"/>
+              <circle cx="16" cy="10" r="3"/><path d="M24 24 L34 30 M24 30 L18 40 M24 30 L30 40"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Extension triceps derrière la tête</div><div class="ex-target">triceps</div></td>
+          <td class="reps">3 × 10–12</td><td class="rest">45 s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SEANCE B -->
+  <div class="group">
+    <div class="group-head">
+      <div class="group-num">B</div>
+      <h2>Dos & Biceps</h2>
+    </div>
+    <p class="group-sub">tirage · 3 exercices</p>
+    <table>
+      <thead><tr><th style="width:64px"></th><th>Exercice</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <path d="M10 34 L10 14"/><circle cx="10" cy="10" r="3"/>
+              <path d="M10 20 L26 14"/><circle cx="30" cy="12" r="3"/>
+              <path d="M10 34 L18 40 M10 34 L4 40"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Rowing unilatéral haltère<span class="new-tag">nouveau</span></div><div class="ex-target">dos / posture</div></td>
+          <td class="reps">3 × 10–12/bras</td><td class="rest">60 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="24" cy="8" r="4"/><path d="M24 12 L24 26"/><path d="M24 26 L14 34"/>
+              <circle cx="12" cy="36" r="3"/><path d="M24 26 L34 30"/><path d="M24 30 L18 40 M24 30 L30 40"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Curl biceps debout</div><div class="ex-target">biceps</div></td>
+          <td class="reps">3 × 10–12</td><td class="rest">45 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="24" cy="8" r="4"/><path d="M24 12 L24 26"/><path d="M24 26 L34 34"/>
+              <circle cx="36" cy="36" r="3"/><path d="M24 26 L14 30"/><path d="M24 30 L18 40 M24 30 L30 40"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Curl marteau <span class="new-tag">corrigé</span></div><div class="ex-target">biceps / avant-bras</div></td>
+          <td class="reps">3 × 10–12</td><td class="rest">45 s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SEANCE C -->
+  <div class="group">
+    <div class="group-head">
+      <div class="group-num">C</div>
+      <h2>Abdos & Gainage</h2>
+    </div>
+    <p class="group-sub">3 exercices</p>
+    <table>
+      <thead><tr><th style="width:64px"></th><th>Exercice</th><th>Séries × Reps / Durée</th><th>Repos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <path d="M8 34 Q20 34 26 26"/><circle cx="30" cy="20" r="4"/><path d="M12 34 L8 40 M12 34 L8 30"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Crunch abdominaux</div><div class="ex-target">grand droit</div></td>
+          <td class="reps">3 × 15–20</td><td class="rest">45 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="8" cy="20" r="4"/><path d="M8 24 L40 32"/><path d="M14 26 L10 36 M18 27 L16 36"/>
+              <path d="M30 30 L38 24"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Planche (gainage)</div><div class="ex-target">transverse / lombaires</div></td>
+          <td class="reps">3 × 30–45 s</td><td class="rest">45 s</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><div class="icon-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round">
+              <circle cx="24" cy="14" r="4"/><path d="M24 18 L24 30"/><path d="M24 24 L14 20 M24 24 L34 28"/>
+              <path d="M24 30 L18 40 M24 30 L30 40"/>
+            </svg>
+          </div></td>
+          <td><div class="ex-name">Russian twist léger <span class="new-tag">corrigé</span></div><div class="ex-target">obliques</div></td>
+          <td class="reps">3 × 15–20/côté</td><td class="rest">45 s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <b>Échauffement (5 min)</b> avant chaque séance : rotations d'épaules, moulinets de bras, montées de genoux sur place.<br>
+    <b>Enchaînement :</b> A puis B puis C, puis on recommence — chaque séance cible des muscles différents donc tu peux t'entraîner tous les jours sans les épuiser.<br>
+    <b>Progression :</b> haltères légers (2–4 kg) les 2 premières semaines, technique avant charge. Monte vers 10 kg quand les reps hautes deviennent faciles.<br>
+    Avis médical recommandé avant de démarrer, notamment un bilan cardiovasculaire si tu n'as pas fait de sport structuré depuis longtemps.
+  </footer>
+
+</div>
+</body>
+</html>
